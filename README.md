@@ -20,11 +20,7 @@ Développer un modèle de régression capable de prédire le rendement d'une cul
 
 > ⚠️ Le dataset original ne contient pas de variable de rendement (`yield`). Une colonne `yield_kg_ha` a donc été **générée synthétiquement** à partir d'une combinaison pondérée des variables du sol et du climat (N, P, K, rainfall, humidity), avec un bruit aléatoire ajouté pour simuler la variabilité naturelle. Les poids utilisés sont arbitraires et n'ont pas de validité agronomique précise ; cette limite est documentée en détail dans le rapport technique.
 
-### Télécharger le dataset
-
-Le fichier CSV n'est pas inclus dans ce dépôt (voir `.gitignore`). Pour l'obtenir :
-1. Télécharger `Crop_recommendation.csv` depuis [Kaggle](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset)
-2. Placer le fichier dans le dossier `data/`
+Le fichier `data/Crop_recommendation.csv` est directement inclus dans ce dépôt (fichier léger, quelques centaines de Ko) : aucun téléchargement supplémentaire n'est nécessaire pour reproduire le projet.
 
 ## Structure du projet
 
@@ -35,13 +31,14 @@ AgriPredict/
 ├── notebooks/
 │   └── agripredict_pipeline.ipynb   # pipeline complet (EDA, modélisation, évaluation)
 ├── data/
-│   └── Crop_recommendation.csv      # à télécharger (non versionné)
+│   └── Crop_recommendation.csv      # dataset inclus dans le dépôt
 ├── models/
-│   └── best_model.pkl               # modèle entraîné (généré par le notebook)
+│   ├── best_model.pkl               # modèle entraîné (régression linéaire, généré par le notebook)
+│   └── colonnes.pkl                 # liste des colonnes attendues par le modèle
 ├── app/
 │   └── app_gradio.py                # interface de démonstration
 └── report/
-    └── rapport_technique.pdf        # rapport technique (5-10 pages)
+    └── Rapport_technique_AgriPredict.pdf   # rapport technique (5-10 pages)
 ```
 
 ## Installation
@@ -59,19 +56,23 @@ pip install xgboost gradio
 ## Utilisation
 
 1. Ouvrir `notebooks/agripredict_pipeline.ipynb`
-2. Exécuter les cellules dans l'ordre (le notebook est conçu pour être reproductible de bout en bout)
+2. Exécuter les cellules dans l'ordre (le notebook est conçu pour être reproductible de bout en bout ; le dataset est déjà inclus dans `data/`)
 3. Lancer l'interface de démonstration :
 ```bash
-python app/app_gradio.py
+cd app
+python app_gradio.py
 ```
+Un lien local (`http://127.0.0.1:7860`) s'ouvre alors dans le navigateur.
 
 ## Méthodologie
 
 1. **Analyse exploratoire (EDA)** : distributions, matrice de corrélation, détection des valeurs aberrantes
-2. **Prétraitement** : encodage de la variable culture, normalisation, split train/test (80/20)
-3. **Modélisation** : comparaison d'un modèle baseline (régression linéaire) et d'un modèle avancé (Random Forest / XGBoost)
-4. **Évaluation** : MAE, RMSE, R², analyse des erreurs par type de culture
-5. **Déploiement** : interface interactive Gradio
+2. **Prétraitement** : encodage One-Hot de la variable culture, séparation X/y, split train/test (80/20)
+3. **Modélisation** : comparaison d'un modèle baseline (régression linéaire) et d'un modèle avancé (Random Forest)
+4. **Évaluation** : MAE, RMSE, R², analyse des erreurs par culture
+5. **Déploiement** : interface interactive Gradio (thème Ocean)
+
+Le modèle retenu au final est la **régression linéaire**, qui obtient de meilleurs résultats que le Random Forest sur ce jeu de données (voir le rapport technique pour l'explication détaillée).
 
 ## Limites et considérations éthiques
 
