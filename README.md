@@ -1,6 +1,7 @@
 # AgriPredict
 
 Prédiction du rendement céréalier par fusion de données climatiques et pédologiques — Projet certificat IA.
+**Dépôt GitHub** : [github.com/AliouneBadaraMedouneDiene/AgriPredict](https://github.com/AliouneBadaraMedouneDiene/AgriPredict)
 
 ## Contexte
 
